@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "kurrency",
     "name": "Kurrency",
     "slug": "Kurrency",
     "version": "1.0.0",
