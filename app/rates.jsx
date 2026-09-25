@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { colors, spacing, radius } from '../src/theme/theme';
 const Rates = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Rates</Text>
+            <Text style={styles.title}>Kurser</Text>
         </View>
     )
 }
@@ -10,11 +11,11 @@ export default Rates
 const styles = StyleSheet.create({
     container: {
     flex: 1,
-    backgroundColor: '#F4F5F8',
-    padding: 24,
+    backgroundColor: colors.background,
+    padding: spacing.lg,
     },
     title: {
-        color: `#14161C`,
+        color: colors.text,
         fontSize: 28,
         fontWeight: '700'
     },
