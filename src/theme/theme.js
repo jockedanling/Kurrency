@@ -1,14 +1,13 @@
-import { Background } from "expo-router/build/react-navigation";
 
 // Färger : alla färger i appen, döpta efter vad de används till
 export const colors = {
-    Background: 'F4F5F8',
+    background: '#F4F5F8',
     surface: '#FFFFFF',
     text: '#14161C',
     textSecondary: '#5A6070',
     line: '#E2E4EA',
     accent: '#1F4FD1',
-    accentLight: '#E8ECFA'
+    accentLight: '#E8ECFA',
     
 }
 
@@ -16,6 +15,7 @@ export const colors = {
 export const spacing = {
     xs: 4,
     sm: 8,
+    md: 16,
     lg: 24,
     xl: 32,
 }
@@ -23,8 +23,15 @@ export const spacing = {
 // Hörnradier
 export const radius = {
     card: 24,
-    // Button....
+    // Buttons
     button: 18,
+
+}
+export const fonts = {
+    bold: 'Manrope_700Bold',
+    medium: 'Manrope_500Medium',
+    semiBold: 'Manrope_600SemiBold',
+    extraBold: 'Manrope_800ExtraBold',
 
 }
 

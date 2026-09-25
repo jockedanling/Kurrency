@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, spacing, radius } from '../src/theme/theme';
+import { colors, spacing, radius, fonts } from '../src/theme/theme';
 const Home = () => {
     return (
         <View style={styles.container}>
@@ -17,6 +17,6 @@ const styles = StyleSheet.create({
     title: {
         color: colors.text,
         fontSize: 28,
-        fontWeight: '700'
+        fontFamily: fonts.bold,
     },
 });
