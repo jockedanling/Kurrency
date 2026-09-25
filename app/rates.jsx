@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native';
-const Home = () => {
+const Rates = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Växla</Text>
+            <Text style={styles.title}>Rates</Text>
         </View>
     )
 }
-export default Home
+export default Rates
 const styles = StyleSheet.create({
     container: {
     flex: 1,
@@ -18,4 +18,4 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: '700'
     },
-});
+})
