@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, spacing, radius, fonts } from '../src/theme/theme';
-const Home = () => {
+import { colors, spacing, radius, fonts} from '../src/theme/theme';
+const Rates = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Omvandla</Text>
+            <Text style={styles.title}>Kurser</Text>
         </View>
     )
 }
-export default Home
+export default Rates
 const styles = StyleSheet.create({
     container: {
     flex: 1,
@@ -19,4 +19,4 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontFamily: fonts.bold,
     },
-});
+})
