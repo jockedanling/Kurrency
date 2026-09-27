@@ -1,22 +1,18 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { colors, spacing, radius, fonts} from '../src/theme/theme';
+import { StyleSheet, Text, } from 'react-native';
+import { colors, fonts} from '../src/theme/theme';
+import Screen from '../src/components/Screen';
 const Rates = () => {
     return (
-        <View style={styles.container}>
+        <Screen>
             <Text style={styles.title}>Kurser</Text>
-        </View>
+        </Screen>
     )
 }
 export default Rates
 const styles = StyleSheet.create({
-    container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    padding: spacing.lg,
-    },
-    title: {
-        color: colors.text,
-        fontSize: 28,
-        fontFamily: fonts.bold,
-    },
+      title: {
+                color: colors.text,
+                fontSize: 28,
+                fontFamily: fonts.bold,
+            }
 })
