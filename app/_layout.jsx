@@ -8,6 +8,8 @@ import {
 } from "@expo-google-fonts/manrope";
 import { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
+import { colors, fonts } from "../src/theme/theme";
+import Ionicons from "@expo/vector-icons/Ionicons";
 SplashScreen.preventAutoHideAsync();
 export default function Layout() {
   const [loaded, error] = useFonts({
@@ -25,9 +27,37 @@ export default function Layout() {
     return null;
   }
   return (
-    <Tabs>
-      <Tabs.Screen name="index" options={{ title: "Omvandla" }} />
-      <Tabs.Screen name="rates" options={{ title: "Kurser" }} />
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarStyle: {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.line,
+        },
+        tabBarLabelStyle: {
+          fontFamily: fonts.medium,
+        },
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Omvandla",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="swap-horizontal" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="rates"
+        options={{
+          title: "Kurser",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="list" color={color} size={size} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

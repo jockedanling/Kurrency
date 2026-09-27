@@ -3,7 +3,7 @@ import { colors, spacing, radius, fonts } from '../src/theme/theme';
 const Home = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Växla</Text>
+            <Text style={styles.title}>Omvandla</Text>
         </View>
     )
 }
