@@ -6,10 +6,38 @@ import Key from "../src/components/Key";
 const Home = () => {
   const [amount, setAmount] = useState("0");
   const pressDigit = (digit) => {
+    if (amount.includes(",") && amount.split(",")[1].length === 2) {
+      return;
+    }
     if (amount === "0") {
       setAmount(digit);
     } else {
       setAmount(amount + digit);
+    }
+  };
+
+  const pressComma = () => {
+    if (amount.includes(",")) {
+      return;
+    } else {
+      setAmount(amount + ",");
+    }
+  };
+  const pressDelete = () => {
+    if (amount.length === 1) {
+      setAmount("0");
+      return;
+    } else {
+      setAmount(amount.slice(0, -1));
+    }
+  };
+  const pressKey = (key) => {
+    if (key === ",") {
+      pressComma();
+    } else if (key === "⌫") {
+      pressDelete();
+    } else {
+      pressDigit(key);
     }
   };
   return (
@@ -17,9 +45,11 @@ const Home = () => {
       <Text style={styles.title}>Omvandla</Text>
       <Text style={styles.amount}>{amount}</Text>
       <View style={styles.keypad}>
-        {["1", "2", "3", "4", "5", "6", "7", "8", "9",",", "0", "⌫"].map((digit) => (
-          <Key key={digit} label={digit} onPress={() => pressDigit(digit)} />
-        ))}
+        {["1", "2", "3", "4", "5", "6", "7", "8", "9", ",", "0", "⌫"].map(
+          (key) => (
+            <Key key={key} label={key} onPress={() => pressKey(key)} />
+          ),
+        )}
       </View>
     </Screen>
   );
@@ -36,8 +66,7 @@ const styles = StyleSheet.create({
   keypad: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
-    spacing: spacing.sm,
+    gap: spacing.sm,
   },
   amount: {
     fontSize: 48,
