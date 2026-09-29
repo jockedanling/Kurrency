@@ -9,8 +9,52 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
-import { getLatestRates } from "../api/frankfurter";
+import { getLatestRates, getCurrencies } from "../api/frankfurter";
 import { colors, spacing, radius, fonts } from "../theme/theme";
+
+// Mappar valutakod till landskod
+const currencyToCountry = {
+  AED: "AE", AFN: "AF", ALL: "AL", AMD: "AM", ANG: "AN",
+  AOA: "AO", ARS: "AR", AUD: "AU", AWG: "AW", AZN: "AZ",
+  BAM: "BA", BBD: "BB", BDT: "BD", BGN: "BG", BHD: "BH",
+  BIF: "BI", BMD: "BM", BND: "BN", BOB: "BO", BRL: "BR",
+  BSD: "BS", BTN: "BT", BWP: "BW", BYN: "BY", BZD: "BZ",
+  CAD: "CA", CDF: "CD", CHF: "CH", CLP: "CL", CNY: "CN",
+  COP: "CO", CRC: "CR", CUP: "CU", CVE: "CV", CZK: "CZ",
+  DJF: "DJ", DKK: "DK", DOP: "DO", DZD: "DZ", EGP: "EG",
+  ERN: "ER", ETB: "ET", EUR: "EU", FJD: "FJ", FKP: "FK",
+  GBP: "GB", GEL: "GE", GHS: "GH", GIP: "GI", GMD: "GM",
+  GNF: "GN", GTQ: "GT", GYD: "GY", HKD: "HK", HNL: "HN",
+  HRK: "HR", HTG: "HT", HUF: "HU", IDR: "ID", ILS: "IL",
+  INR: "IN", IQD: "IQ", IRR: "IR", ISK: "IS", JMD: "JM",
+  JOD: "JO", JPY: "JP", KES: "KE", KGS: "KG", KHR: "KH",
+  KMF: "KM", KRW: "KR", KWD: "KW", KYD: "KY", KZT: "KZ",
+  LAK: "LA", LBP: "LB", LKR: "LK", LRD: "LR", LSL: "LS",
+  LYD: "LY", MAD: "MA", MDL: "MD", MGA: "MG", MKD: "MK",
+  MMK: "MM", MNT: "MN", MOP: "MO", MRU: "MR", MUR: "MU",
+  MVR: "MV", MWK: "MW", MXN: "MX", MYR: "MY", MZN: "MZ",
+  NAD: "NA", NGN: "NG", NIO: "NI", NOK: "NO", NPR: "NP",
+  NZD: "NZ", OMR: "OM", PAB: "PA", PEN: "PE", PGK: "PG",
+  PHP: "PH", PKR: "PK", PLN: "PL", PYG: "PY", QAR: "QA",
+  RON: "RO", RSD: "RS", RUB: "RU", RWF: "RW", SAR: "SA",
+  SBD: "SB", SCR: "SC", SDG: "SD", SEK: "SE", SGD: "SG",
+  SHP: "SH", SLE: "SL", SOS: "SO", SRD: "SR", STN: "ST",
+  SVC: "SV", SYP: "SY", SZL: "SZ", THB: "TH", TJS: "TJ",
+  TMT: "TM", TND: "TN", TOP: "TO", TRY: "TR", TTD: "TT",
+  TWD: "TW", TZS: "TZ", UAH: "UA", UGX: "UG", USD: "US",
+  UYU: "UY", UZS: "UZ", VES: "VE", VND: "VN", VUV: "VU",
+  WST: "WS", XAF: "CM", XCD: "AG", XOF: "SN", XPF: "PF",
+  YER: "YE", ZAR: "ZA", ZMW: "ZM", ZWL: "ZW",
+};
+
+// Gör om landskod till flaggemoji
+function getFlag(code) {
+  const country = currencyToCountry[code];
+  if (!country) return "";
+  return String.fromCodePoint(
+    ...[...country].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65)
+  );
+}
 
 // Kurslista — visar vad varje valuta kostar i kronor 
 export default function RatesScreen() {
@@ -18,6 +62,7 @@ export default function RatesScreen() {
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [currencyNames, setCurrencyNames] = useState({});
   const [error, setError] = useState(null);
 
   // Hämtar senaste kurser från API:et och uppdaterar state 
@@ -25,9 +70,17 @@ export default function RatesScreen() {
     setLoading(true);
     setError(null);
     try {
-      const data = await getLatestRates("SEK");
-      setRates(data.rates);
-      setDate(data.date);
+      const [ratesData, currencies] = await Promise.all([
+        getLatestRates("SEK"),
+        getCurrencies(),
+      ]);
+      setRates(ratesData.rates);
+      setDate(ratesData.date);
+      const names = {};
+      currencies.forEach((c) => {
+        names[c.code] = c.name;
+      });
+      setCurrencyNames(names);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -84,8 +137,10 @@ export default function RatesScreen() {
   }
 
 const filteredRates = rates.filter(
-    (item) => item.code.toLowerCase().includes(search.toLowerCase())
-);
+    (item) =>
+      item.code.toLowerCase().includes(search.toLowerCase()) ||
+      (currencyNames[item.code] || "").toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <View style={styles.container}>
@@ -101,10 +156,16 @@ const filteredRates = rates.filter(
         keyExtractor={(item) => item.code}
         renderItem={({ item }) => (
           <View style={styles.row}>
-            <Text style={styles.code}>{item.code}</Text>
-            <Text style={styles.rate}>{formatRate(item.code, item.rate)}</Text>
-          </View>
-        )}
+            <View style={styles.left}>
+                <Text style={styles.flag}>{getFlag(item.code)}</Text>
+                <View>
+                    <Text style={styles.code}>{item.code}</Text>
+                    <Text style={styles.name}>{currencyNames[item.code] || ""}</Text>
+                </View>
+            </View>
+        <Text style={styles.rate}>{formatRate(item.code, item.rate)}</Text>
+    </View>
+    )}
       />
       <Text style={styles.updated}>Senast uppdaterad: {date}</Text>
     </View>
@@ -171,5 +232,18 @@ const styles = StyleSheet.create({
   fontFamily: fonts.medium,
   fontSize: 16,
   color: colors.text,
+},
+left: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+},
+flag: {
+    fontSize: 28,
+},
+name: {
+    fontSize: 12,
+    fontFamily: fonts.medium,
+    color: colors.textSecondary,
 },
 });
