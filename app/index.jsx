@@ -5,12 +5,20 @@ import { useState } from "react";
 import NumPad from "../src/components/NumPad";
 const Home = () => {
   const [amount, setAmount] = useState("0");
+  const [from, setFrom] = useState('SEK');
+  const [to, setTo] = useState('EUR');
+
+  const swap = () => {
+    setFrom(to);
+    setTo(from);
+  }
   
   return (
     <Screen>
       <Text style={styles.title}>Omvandla</Text>
       <Text style={styles.amount}>{amount}</Text>
       <NumPad value={amount} onChange={setAmount} />
+      <Text onPress={swap}>{from} → {to}</Text>
     </Screen>
   );
 };
