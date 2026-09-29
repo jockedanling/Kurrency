@@ -7,6 +7,7 @@ import {
   FlatList,
   ActivityIndicator,
   StyleSheet,
+  TextInput,
 } from "react-native";
 import { getLatestRates } from "../api/frankfurter";
 import { colors, spacing, radius, fonts } from "../theme/theme";
@@ -16,6 +17,7 @@ export default function RatesScreen() {
   const [rates, setRates] = useState([]);
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   const [error, setError] = useState(null);
 
   // Hämtar senaste kurser från API:et och uppdaterar state 
@@ -81,10 +83,21 @@ export default function RatesScreen() {
     );
   }
 
+const filteredRates = rates.filter(
+    (item) => item.code.toLowerCase().includes(search.toLowerCase())
+);
+
   return (
     <View style={styles.container}>
+        <TextInput
+        style={styles.searchInput}
+        placeholder="Sök valuta..."
+        placeholderTextColor={colors.textSecondary}
+        value={search}
+        onChangeText={setSearch}
+        />
       <FlatList
-        data={rates}
+        data={filteredRates}
         keyExtractor={(item) => item.code}
         renderItem={({ item }) => (
           <View style={styles.row}>
@@ -149,4 +162,14 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semiBold,
     color: colors.accent,
   },
+  searchInput: {
+  backgroundColor: colors.surface,
+  marginHorizontal: spacing.md,
+  marginBottom: spacing.sm,
+  padding: spacing.md,
+  borderRadius: radius.button,
+  fontFamily: fonts.medium,
+  fontSize: 16,
+  color: colors.text,
+},
 });
