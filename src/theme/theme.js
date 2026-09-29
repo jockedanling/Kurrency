@@ -6,7 +6,8 @@ export const colors = {
     text: '#14161C',
     textSecondary: '#5A6070',
     line: '#E2E4EA',
-    accent: '#1F4FD1'
+    accent: '#1F4FD1',
+    accentLight: '#E8ECFA'
 }
 
 // Avstånd 
