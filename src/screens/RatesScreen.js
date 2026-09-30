@@ -5,10 +5,11 @@ import {
   View,
   Text,
   FlatList,
-  ActivityIndicator,
   StyleSheet,
   TextInput,
 } from "react-native";
+import ErrorView from "../components/ErrorView";
+import LoadingView from "../components/LoadingView";
 import { getLatestRates, getCurrencies } from "../api/frankfurter";
 import { colors, spacing, radius, fonts } from "../theme/theme";
 
@@ -118,22 +119,11 @@ export default function RatesScreen() {
   }
 
   if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color={colors.accent} />
-      </View>
-    );
+    return (<LoadingView/>);
   }
 
   if (error) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.errorText}>{error}</Text>
-        <Text style={styles.retry} onPress={fetchRates}>
-          Försök igen
-        </Text>
-      </View>
-    );
+    return <ErrorView message={error} onRetry={fetchRates} />;
   }
 
 const filteredRates = rates.filter(
@@ -178,12 +168,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     paddingTop: spacing.md,
   },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.background,
-  },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -211,17 +195,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.medium,
     color: colors.textSecondary,
     fontSize: 12,
-  },
-  errorText: {
-    fontSize: 16,
-    fontFamily: fonts.semiBold,
-    color: colors.text,
-    marginBottom: spacing.sm,
-  },
-  retry: {
-    fontSize: 16,
-    fontFamily: fonts.semiBold,
-    color: colors.accent,
   },
   searchInput: {
   backgroundColor: colors.surface,
