@@ -7,6 +7,7 @@ import CurrencyPill from "../src/components/CurrencyPill";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getRate } from "../src/api/frankfurter";
 import { convert } from "../src/utils/convert";
+import ErrorView from "../src/components/ErrorView";
 
 const formatMoney = (value) =>
   new Intl.NumberFormat("sv-SE", {
@@ -34,7 +35,6 @@ const Home = () => {
     setError(null);
     try {
       const data = await getRate(from, to);
-      // console.log(data); 
       setRate(data.rate);
     } catch (err) {
       setError(err.message);
@@ -50,6 +50,13 @@ const Home = () => {
     setFrom(to);
     setTo(from);
   };
+  if (error) {
+    return (
+      <Screen>
+        <ErrorView message={error} onRetry={fetchRate} />
+      </Screen>
+    );
+  }
   return (
     <Screen>
       <Text style={styles.title}>Omvandla</Text>
@@ -62,7 +69,7 @@ const Home = () => {
         <CurrencyPill code={to} />
       </View>
       <Text style={styles.result}>
-        {loading ? "Laddar..." : error ? error : `${formatMoney(result)} ${to}`}
+        {loading ? "Laddar..." : `${formatMoney(result)} ${to}`}
       </Text>
       {rate !== null && (
         <Text
@@ -86,7 +93,7 @@ const styles = StyleSheet.create({
     fontSize: 48,
     color: colors.text,
     fontFamily: fonts.bold,
-    fontVariant: ['tabular-nums']
+    fontVariant: ["tabular-nums"],
   },
   currencyRow: {
     flexDirection: "row",
@@ -104,13 +111,13 @@ const styles = StyleSheet.create({
     fontSize: 48,
     color: colors.accent,
     fontFamily: fonts.bold,
-    fontVariant: ['tabular-nums']
+    fontVariant: ["tabular-nums"],
   },
   rateText: {
     fontSize: 14,
     color: colors.textSecondary,
     fontFamily: fonts.medium,
     marginBottom: spacing.lg,
-    fontVariant: ['tabular-nums']
+    fontVariant: ["tabular-nums"],
   },
 });
