@@ -8,6 +8,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { getRate } from "../src/api/frankfurter";
 import { convert } from "../src/utils/convert";
 import ErrorView from "../src/components/ErrorView";
+import CurrencyPicker from "../src/components/CurrencyPicker";
 
 const formatMoney = (value) =>
   new Intl.NumberFormat("sv-SE", {
@@ -27,8 +28,11 @@ const Home = () => {
   const [rate, setRate] = useState(null); // Kursen när den har hämtats
   const [loading, setLoading] = useState(true); // true medan vi väntar
   const [error, setError] = useState(null); // felmeddelandet om något gick fel
+  const [pickerFor, setPickerFor] = useState(null);
   const numericAmount = Number(amount.replace(",", "."));
   const result = rate === null ? null : convert(numericAmount, rate);
+  
+
   const fetchRate = async () => {
     setLoading(true);
     setRate(null);
@@ -50,6 +54,14 @@ const Home = () => {
     setFrom(to);
     setTo(from);
   };
+  const selectCurrency = (code) => {
+    if(pickerFor === 'from') {
+      setFrom(code);
+    } else {
+      setTo(code);
+    }
+    setPickerFor(null);
+  }
   if (error) {
     return (
       <Screen>
@@ -62,11 +74,11 @@ const Home = () => {
       <Text style={styles.title}>Omvandla</Text>
       <Text style={styles.amount}>{amount}</Text>
       <View style={styles.currencyRow}>
-        <CurrencyPill code={from} />
+        <CurrencyPill code={from} onPress={() => setPickerFor('from')} />
         <Pressable onPress={swap} style={styles.swapButton}>
           <Ionicons name="swap-horizontal" size={24} color={colors.accent} />
         </Pressable>
-        <CurrencyPill code={to} />
+        <CurrencyPill code={to} onPress={() => setPickerFor('to')} />
       </View>
       <Text style={styles.result}>
         {loading ? "Laddar..." : `${formatMoney(result)} ${to}`}
@@ -77,6 +89,7 @@ const Home = () => {
         >{`1 ${from} = ${formatRate(rate)} ${to}`}</Text>
       )}
       <NumPad value={amount} onChange={setAmount} />
+      <CurrencyPicker visible={pickerFor !== null} onSelect={selectCurrency} onClose={() => setPickerFor(null)} />
     </Screen>
   );
 };
