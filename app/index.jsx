@@ -7,6 +7,7 @@ import CurrencyPill from "../src/components/CurrencyPill";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getRate } from "../src/api/frankfurter";
 import { convert } from "../src/utils/convert";
+import LoadingView from "../src/components/LoadingView";
 
 const formatMoney = (value) =>
   new Intl.NumberFormat("sv-SE", {
