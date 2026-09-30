@@ -1,6 +1,36 @@
-import { Modal, StyleSheet, Text, View, Pressable } from "react-native";
-import { colors, spacing, fonts, radius } from "../theme/theme";
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  FlatList,
+} from "react-native";
+import { colors, spacing, fonts, } from "../theme/theme";
+import { getCurrencies } from "../api/frankfurter";
+import { useEffect, useState } from "react";
+import LoadingView from "./LoadingView";
+import ErrorView from "./ErrorView";
 export default function CurrencyPicker({ visible, onSelect, onClose }) {
+  const [currencies, setCurrencies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchCurrencies = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getCurrencies();
+      setCurrencies(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchCurrencies();
+  }, []);
   return (
     <Modal
       visible={visible} // true = visas, false = dold
@@ -10,9 +40,28 @@ export default function CurrencyPicker({ visible, onSelect, onClose }) {
     >
       <View style={styles.view}>
         <Text style={styles.title}>Välj valuta</Text>
-        <Pressable style={styles.button} onPress={() => onSelect("EUR")}>
-          <Text style={styles.title}>Välj EUR</Text>
-        </Pressable>
+        {loading ? (
+          <LoadingView />
+        ) : error ? (
+          <ErrorView message={error} onRetry={fetchCurrencies} />
+        ) : (
+          <FlatList
+            data={currencies}
+            keyExtractor={(item) => item.code}
+            renderItem={({ item }) => (
+              <Pressable
+                onPress={() => onSelect(item.code)}
+                style={({ pressed }) => [
+                  styles.row,
+                  pressed && styles.rowPressed,
+                ]}
+              >
+                <Text style={styles.code}>{item.code}</Text>
+                <Text style={styles.name}>{item.name}</Text>
+              </Pressable>
+            )}
+          />
+        )}
       </View>
     </Modal>
   );
@@ -30,9 +79,23 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: spacing.sm,
   },
-  button: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.button,
-    padding: spacing.lg,
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.lg,
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line
+  },
+  rowPressed: { opacity: 0.5 },
+  code: {
+    fontFamily: fonts.bold,
+    fontSize: 16,
+    color: colors.text,
+    width: 48,
+  },
+  name: {
+    fontFamily: fonts.medium,
+    color: colors.textSecondary,
   },
 });
