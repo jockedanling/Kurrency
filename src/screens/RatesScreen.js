@@ -7,11 +7,13 @@ import {
   FlatList,
   StyleSheet,
   TextInput,
+  RefreshControl,
 } from "react-native";
 import ErrorView from "../components/ErrorView";
 import LoadingView from "../components/LoadingView";
 import { getLatestRates, getCurrencies } from "../api/frankfurter";
 import { colors, spacing, radius, fonts } from "../theme/theme";
+import { Ionicons } from "@expo/vector-icons";
 
 // Mappar valutakod till landskod
 const currencyToCountry = {
@@ -65,6 +67,7 @@ export default function RatesScreen() {
   const [search, setSearch] = useState("");
   const [currencyNames, setCurrencyNames] = useState({});
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Hämtar senaste kurser från API:et och uppdaterar state 
   async function fetchRates() {
@@ -86,6 +89,28 @@ export default function RatesScreen() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  }
+  
+  // Uppdaterar kurser vid pull-to-refresh
+  async function onRefresh() {
+    setRefreshing(true);
+    try {
+        const [ratesData, currencies] = await Promise.all([
+            getLatestRates("SEK"),
+            getCurrencies(),
+        ]);
+        setRates(ratesData.rates);
+        setDate(ratesData.date);
+        const names = {};
+        currencies.forEach((c) => {
+            names[c.code] = c.name;
+        });
+        setCurrencyNames(names);
+    } catch (err) {
+        setError(err.message);
+    } finally {
+        setRefreshing(false);
     }
   }
 
@@ -134,39 +159,50 @@ const filteredRates = rates.filter(
 
   return (
     <View style={styles.container}>
-        <TextInput
-        style={styles.searchInput}
-        placeholder="Sök valuta..."
-        placeholderTextColor={colors.textSecondary}
-        value={search}
-        onChangeText={setSearch}
-        />
-      <FlatList
-        data={filteredRates}
-        keyExtractor={(item) => item.code}
-        renderItem={({ item }) => (
-          <View style={styles.row}>
-            <View style={styles.left}>
-                <Text style={styles.flag}>{getFlag(item.code)}</Text>
-                <View>
-                    <Text style={styles.code}>{item.code}</Text>
-                    <Text style={styles.name}>{currencyNames[item.code] || ""}</Text>
+        <View style={styles.searchRow}>
+            <Ionicons name="search" size={20} color={colors.textSecondary} />
+            <TextInput
+                style={styles.searchInput}
+                placeholder="Sök valuta..."
+                placeholderTextColor={colors.textSecondary}
+                value={search}
+                onChangeText={setSearch}
+            />
+        </View>
+        <FlatList
+            data={filteredRates}
+            keyExtractor={(item) => item.code}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />
+            }
+            ListEmptyComponent={
+                <View style={styles.empty}>
+                    <Text style={styles.emptyText}>Inga valutor hittades</Text>
+                    </View>
+            }
+            renderItem={({ item }) => (
+                <View style={styles.row}>
+                    <View style={styles.left}>
+                        <Text style={styles.flag}>{getFlag(item.code)}</Text>
+                        <View>
+                            <Text style={styles.code}>{item.code}</Text>
+                            <Text style={styles.name}>{currencyNames[item.code] || ""}</Text>
+                        </View>
+                    </View>
+                    <Text style={styles.rate}>{formatRate(item.code, item.rate)}</Text>
                 </View>
-            </View>
-        <Text style={styles.rate}>{formatRate(item.code, item.rate)}</Text>
+            )}
+        />
+        <Text style={styles.updated}>Senast uppdaterad: {date}</Text>
     </View>
-    )}
-      />
-      <Text style={styles.updated}>Senast uppdaterad: {date}</Text>
-    </View>
-  );
+);
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingTop: spacing.md,
+    paddingTop: 70,
   },
   row: {
     flexDirection: "row",
@@ -196,15 +232,22 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: 12,
   },
-  searchInput: {
-  backgroundColor: colors.surface,
-  marginHorizontal: spacing.md,
-  marginBottom: spacing.sm,
-  padding: spacing.md,
-  borderRadius: radius.button,
-  fontFamily: fonts.medium,
-  fontSize: 16,
-  color: colors.text,
+  searchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.button,
+    gap: spacing.sm,
+},
+searchInput: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    fontFamily: fonts.medium,
+    fontSize: 16,
+    color: colors.text,
 },
 left: {
     flexDirection: "row",
@@ -217,6 +260,15 @@ flag: {
 name: {
     fontSize: 12,
     fontFamily: fonts.medium,
+    color: colors.textSecondary,
+},
+empty: {
+    alignItems: "center",
+    paddingTop: spacing.xl,
+},
+emptyText: {
+    fontFamily: fonts.medium,
+    fontSize: 16,
     color: colors.textSecondary,
 },
 });
