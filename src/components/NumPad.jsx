@@ -1,19 +1,26 @@
-import { View, StyleSheet} from 'react-native';
-import Key from './Key';
-import {spacing} from '../theme/theme';
+import { View, StyleSheet } from "react-native";
+import Key from "./Key";
+import { spacing } from "../theme/theme";
+//
+// Hela sifferknappsatsen med tolv knappar och den bestämmer reglerna för hur beloppet får se ut.
+//
 export default function NumPad({ value, onChange }) {
+  // Finns det redan två decimaler händer ingenting
   const pressDigit = (digit) => {
     if (value.includes(",") && value.split(",")[1].length === 2) {
       return;
     }
     if (value === "0") {
+      // står det bara '0' ersätts nollan med siffran.
       onChange(digit);
     } else {
+      // annars läggs siffran till sist
       onChange(value + digit);
     }
   };
 
   const pressComma = () => {
+    // Lägger till ett kommatecken om det inte redan finns ett.
     if (value.includes(",")) {
       return;
     } else {
@@ -21,6 +28,7 @@ export default function NumPad({ value, onChange }) {
     }
   };
   const pressDelete = () => {
+    // Tar bort sista tecknet. finns det bara ett tecken blir det '0' istället för en tom sträng.
     if (value.length === 1) {
       onChange("0");
       return;
@@ -29,6 +37,7 @@ export default function NumPad({ value, onChange }) {
     }
   };
   const pressKey = (key) => {
+    // Tar emot alla tryck och skickar vidare till rätt funktion.
     if (key === ",") {
       pressComma();
     } else if (key === "⌫") {
@@ -48,9 +57,9 @@ export default function NumPad({ value, onChange }) {
   );
 }
 const styles = StyleSheet.create({
-    keypad: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: spacing.sm,
-      },
-})
+  keypad: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.sm,
+  },
+});

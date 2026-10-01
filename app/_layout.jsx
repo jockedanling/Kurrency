@@ -10,16 +10,16 @@ import { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { colors, fonts } from "../src/theme/theme";
 import Ionicons from "@expo/vector-icons/Ionicons";
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync(); // Gömmer startskärmen automatiskt så fort appen har startat
 export default function Layout() {
-  const [loaded, error] = useFonts({
+  const [loaded, error] = useFonts({ // laddar de fyra Manrope-vikterna
     Manrope_500Medium,
     Manrope_600SemiBold,
     Manrope_700Bold,
     Manrope_800ExtraBold,
   });
-  useEffect(() => {
-    if (loaded || error) {
+  useEffect(() => { // körs varje gång när loaded eller error ändras och då gömmer startskärmen.
+    if (loaded || error) { // om typsnittet inte kan laddas så visas appen med standardtypsnitt
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
@@ -42,7 +42,7 @@ export default function Layout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="index" // Måste matcha filnamnet
         options={{
           title: "Omvandla",
           tabBarIcon: ({ color, size }) => (
@@ -51,7 +51,7 @@ export default function Layout() {
         }}
       />
       <Tabs.Screen
-        name="rates"
+        name="rates" // Måste matcha filnamnet
         options={{
           title: "Kurser",
           tabBarIcon: ({ color, size }) => (
