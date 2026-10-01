@@ -1,21 +1,23 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { colors, fonts, spacing } from "../src/theme/theme";
+import { colors, fonts, spacing, radius } from "../src/theme/theme";
 import Screen from "../src/components/Screen";
 import { useEffect, useState } from "react";
 import NumPad from "../src/components/NumPad";
-import CurrencyPill from "../src/components/CurrencyPill";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getRate } from "../src/api/frankfurter";
 import { convert } from "../src/utils/convert";
 import ErrorView from "../src/components/ErrorView";
 import CurrencyPicker from "../src/components/CurrencyPicker";
+import AmountRow from "../src/components/AmountRow";
 
-const formatMoney = (value) => // Gör om ett tal till svensk text och ger 2 decimaler 
+// Gör om ett tal till svensk text och ger 2 decimaler
+const formatMoney = (value) =>
   new Intl.NumberFormat("sv-SE", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);
-const formatRate = (value) => // formatRate ger 4 decimaler som kurser ofta är små tal.
+// formatRate ger 4 decimaler som kurser ofta är små tal.
+const formatRate = (value) =>
   new Intl.NumberFormat("sv-SE", {
     minimumFractionDigits: 4,
     maximumFractionDigits: 4,
@@ -28,7 +30,7 @@ const Home = () => {
   const [rate, setRate] = useState(null); // Kursen när den har hämtats
   const [loading, setLoading] = useState(true); // true medan vi väntar
   const [error, setError] = useState(null); // felmeddelandet om något gick fel
-  const [pickerFor, setPickerFor] = useState(null); 
+  const [pickerFor, setPickerFor] = useState(null);
   const numericAmount = Number(amount.replace(",", ".")); // byter svenskt komma mot punkt så att Number() förstår det.
   const result = rate === null ? null : convert(numericAmount, rate);
 
@@ -47,16 +49,18 @@ const Home = () => {
       setLoading(false);
     }
   };
-  useEffect(() => { // Kör fetchrate när skärmen visas och varje gång 'from' eller 'to' ändras.
+  useEffect(() => {
+    // Kör fetchrate när skärmen visas och varje gång 'from' eller 'to' ändras.
     fetchRate();
   }, [from, to]);
 
-  const swap = () => { // Byter plats på valutorna
+  const swap = () => {
+    // Byter plats på valutorna
     setFrom(to);
     setTo(from);
   };
 
-  // Tar emot valutan från väljaren och sparar den på rätt sida. 
+  // Tar emot valutan från väljaren och sparar den på rätt sida.
   // Är den samma som på andra sidan byts håll i stället.
   const selectCurrency = (code) => {
     if (pickerFor === "from" && code === to) {
@@ -70,7 +74,7 @@ const Home = () => {
     }
     setPickerFor(null);
   };
-  // Felhantering. Om hämtningen missluckas ersätts hela skärmen med ErrorView.
+  // Felhantering. Om hämtningen misslyckas ersätts hela skärmen med ErrorView.
   if (error) {
     return (
       <Screen>
@@ -81,17 +85,31 @@ const Home = () => {
   return (
     <Screen>
       <Text style={styles.title}>Omvandla</Text>
-      <Text style={styles.amount}>{amount}</Text>
-      <View style={styles.currencyRow}>
-        <CurrencyPill code={from} onPress={() => setPickerFor("from")} />
-        <Pressable onPress={swap} style={styles.swapButton}>
-          <Ionicons name="swap-horizontal" size={24} color={colors.accent} />
-        </Pressable>
-        <CurrencyPill code={to} onPress={() => setPickerFor("to")} />
+      <View style={styles.card}>
+        <AmountRow
+          code={from}
+          value={amount}
+          onPressCurrency={() => setPickerFor("from")}
+        />
+
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Pressable
+            onPress={swap}
+            style={styles.swapButton}
+            accessibilityLabel="Byt håll på valutorna"
+          >
+            <Ionicons name="swap-vertical" size={20} color={colors.accent} />
+          </Pressable>
+          <View style={styles.dividerLine} />
+        </View>
+        <AmountRow
+          code={to}
+          value={loading ? "..." : `${formatMoney(result)}`}
+          onPressCurrency={() => setPickerFor("to")}
+          highlight
+        />
       </View>
-      <Text style={styles.result}>
-        {loading ? "Laddar..." : `${formatMoney(result)} ${to}`}
-      </Text>
       {rate !== null && (
         <Text
           style={styles.rateText}
@@ -115,29 +133,34 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontFamily: fonts.bold,
   },
-  amount: {
-    fontSize: 48,
-    color: colors.text,
-    fontFamily: fonts.bold,
-    fontVariant: ["tabular-nums"],
-  },
-  currencyRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginVertical: spacing.lg,
+  card: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: radius.card,
+    paddingVertical: 6,
+    paddingHorizontal: 18,
+    marginVertical: spacing.md,
   },
   swapButton: {
     width: 44,
     height: 44,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
   },
-  result: {
-    fontSize: 48,
-    color: colors.accent,
-    fontFamily: fonts.bold,
-    fontVariant: ["tabular-nums"],
+  divider: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.line,
   },
   rateText: {
     fontSize: 14,
