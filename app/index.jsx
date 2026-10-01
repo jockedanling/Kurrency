@@ -131,7 +131,8 @@ const styles = StyleSheet.create({
   title: {
     color: colors.text,
     fontSize: 28,
-    fontFamily: fonts.bold,
+    fontFamily: fonts.extraBold,
+    letterSpacing: -1
   },
   card: {
     backgroundColor: colors.surface,
