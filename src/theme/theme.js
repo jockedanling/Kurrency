@@ -8,7 +8,8 @@ export const colors = {
     line: '#E2E4EA',
     accent: '#1F4FD1',
     accentLight: '#E8ECFA',
-    onAccent: '#FFFFFF'
+    onAccent: '#FFFFFF',
+    surfaceMuted: '#E9EBF0'
 }
 
 // Avstånd 
