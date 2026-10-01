@@ -65,6 +65,8 @@ export default function NumPad({ value, onChange }) {
               key={key}
               label={key}
               muted={key === "," || key === "⌫"}
+              icon={key === "⌫" ? "backspace-outline" : undefined}
+              accessibilityLabel={key === "⌫" ? "Radera" : undefined}
               onPress={() => pressKey(key)}
             />
           ))}
