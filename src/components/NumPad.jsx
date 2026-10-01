@@ -1,9 +1,18 @@
 import { View, StyleSheet } from "react-native";
 import Key from "./Key";
 import { spacing } from "../theme/theme";
+
+// Ordning i listan är layouten på skärmen
+const rows = [
+  ["1", "2", "3"],
+  ["4", "5", "6"],
+  ["7", "8", "9"],
+  [",", "0", "⌫"],
+];
 //
 // Hela sifferknappsatsen med tolv knappar och den bestämmer reglerna för hur beloppet får se ut.
 //
+
 export default function NumPad({ value, onChange }) {
   // Finns det redan två decimaler händer ingenting
   const pressDigit = (digit) => {
@@ -46,20 +55,34 @@ export default function NumPad({ value, onChange }) {
       pressDigit(key);
     }
   };
+
   return (
     <View style={styles.keypad}>
-      {["1", "2", "3", "4", "5", "6", "7", "8", "9", ",", "0", "⌫"].map(
-        (key) => (
-          <Key key={key} label={key} onPress={() => pressKey(key)} />
-        ),
-      )}
+      {rows.map((row, index) => (
+        <View key={index} style={styles.row}>
+          {row.map((key) => (
+            <Key
+              key={key}
+              label={key}
+              muted={key === "," || key === "⌫"}
+              icon={key === "⌫" ? "backspace-outline" : undefined}
+              accessibilityLabel={key === "⌫" ? "Radera" : undefined}
+              onPress={() => pressKey(key)}
+            />
+          ))}
+        </View>
+      ))}
     </View>
   );
 }
 const styles = StyleSheet.create({
   keypad: {
+    flex: 1,
+    gap: spacing.sm,
+  },
+  row: {
+    flex: 1,
     flexDirection: "row",
-    flexWrap: "wrap",
     gap: spacing.sm,
   },
 });
