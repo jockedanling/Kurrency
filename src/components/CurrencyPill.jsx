@@ -1,6 +1,8 @@
 import { Pressable, StyleSheet, Text } from "react-native";
-import { colors, spacing, fonts, radius } from '../theme/theme';
-
+import { colors, spacing, fonts, radius } from "../theme/theme";
+//
+// En rundad knapp som visar en valutakod.
+//
 export default function CurrencyPill({ code, onPress }) {
   return (
     <Pressable onPress={onPress} style={styles.pill}>
@@ -15,12 +17,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     borderRadius: radius.button,
     minHeight: 44,
-    alignItems:'center',
-    justifyContent: 'center'
+    alignItems: "center",
+    justifyContent: "center",
   },
   label: {
     color: colors.accent,
     fontSize: 18,
-    fontFamily: fonts.bold
+    fontFamily: fonts.bold,
   },
 });

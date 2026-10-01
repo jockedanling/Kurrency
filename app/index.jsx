@@ -10,28 +10,30 @@ import { convert } from "../src/utils/convert";
 import ErrorView from "../src/components/ErrorView";
 import CurrencyPicker from "../src/components/CurrencyPicker";
 
-const formatMoney = (value) =>
+const formatMoney = (value) => // Gör om ett tal till svensk text och ger 2 decimaler 
   new Intl.NumberFormat("sv-SE", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);
-const formatRate = (value) =>
+const formatRate = (value) => // formatRate ger 4 decimaler som kurser ofta är små tal.
   new Intl.NumberFormat("sv-SE", {
     minimumFractionDigits: 4,
     maximumFractionDigits: 4,
   }).format(value);
 
 const Home = () => {
-  const [amount, setAmount] = useState("0");
-  const [from, setFrom] = useState("SEK");
-  const [to, setTo] = useState("EUR");
+  const [amount, setAmount] = useState("0"); // beloppet som sträng för att ',' och avslutande noller syns
+  const [from, setFrom] = useState("SEK"); // Valutakod som start
+  const [to, setTo] = useState("EUR"); // Valutakoderna som start
   const [rate, setRate] = useState(null); // Kursen när den har hämtats
   const [loading, setLoading] = useState(true); // true medan vi väntar
   const [error, setError] = useState(null); // felmeddelandet om något gick fel
-  const [pickerFor, setPickerFor] = useState(null);
-  const numericAmount = Number(amount.replace(",", "."));
+  const [pickerFor, setPickerFor] = useState(null); 
+  const numericAmount = Number(amount.replace(",", ".")); // byter svenskt komma mot punkt så att Number() förstår det.
   const result = rate === null ? null : convert(numericAmount, rate);
 
+  // Hämtar kursen för 'from' till 'to' från API:et och sätter loading, rate och error
+  // efter hur det gick.
   const fetchRate = async () => {
     setLoading(true);
     setRate(null);
@@ -45,14 +47,17 @@ const Home = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
+  useEffect(() => { // Kör fetchrate när skärmen visas och varje gång 'from' eller 'to' ändras.
     fetchRate();
   }, [from, to]);
 
-  const swap = () => {
+  const swap = () => { // Byter plats på valutorna
     setFrom(to);
     setTo(from);
   };
+
+  // Tar emot valutan från väljaren och sparar den på rätt sida. 
+  // Är den samma som på andra sidan byts håll i stället.
   const selectCurrency = (code) => {
     if (pickerFor === "from" && code === to) {
       swap();
@@ -65,6 +70,7 @@ const Home = () => {
     }
     setPickerFor(null);
   };
+  // Felhantering. Om hämtningen missluckas ersätts hela skärmen med ErrorView.
   if (error) {
     return (
       <Screen>

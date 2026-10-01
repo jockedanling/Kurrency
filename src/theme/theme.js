@@ -23,10 +23,10 @@ export const spacing = {
 // Hörnradier
 export const radius = {
     card: 24,
-    // Buttons
     button: 18,
 
 }
+// Fonter
 export const fonts = {
     bold: 'Manrope_700Bold',
     medium: 'Manrope_500Medium',

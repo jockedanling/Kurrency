@@ -1,7 +1,9 @@
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import { colors, spacing, fonts, radius } from "../theme/theme";
-import { Ionicons } from "@expo/vector-icons";
-
+import  Ionicons  from "@expo/vector-icons/Ionicons";
+//
+// Visas när ett API-anrop misslyckas. Ett felmeddelande med ikon, rubrik, felmeddelande och en button "Försök igen".
+//
 export default function ErrorView({ message, onRetry }) {
   return (
     <View style={styles.container}>
