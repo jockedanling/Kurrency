@@ -31,7 +31,6 @@ const Home = () => {
   const [pickerFor, setPickerFor] = useState(null);
   const numericAmount = Number(amount.replace(",", "."));
   const result = rate === null ? null : convert(numericAmount, rate);
-  
 
   const fetchRate = async () => {
     setLoading(true);
@@ -55,13 +54,17 @@ const Home = () => {
     setTo(from);
   };
   const selectCurrency = (code) => {
-    if(pickerFor === 'from') {
+    if (pickerFor === "from" && code === to) {
+      swap();
+    } else if (pickerFor === "to" && code === from) {
+      swap();
+    } else if (pickerFor === "from") {
       setFrom(code);
     } else {
       setTo(code);
     }
     setPickerFor(null);
-  }
+  };
   if (error) {
     return (
       <Screen>
@@ -74,11 +77,11 @@ const Home = () => {
       <Text style={styles.title}>Omvandla</Text>
       <Text style={styles.amount}>{amount}</Text>
       <View style={styles.currencyRow}>
-        <CurrencyPill code={from} onPress={() => setPickerFor('from')} />
+        <CurrencyPill code={from} onPress={() => setPickerFor("from")} />
         <Pressable onPress={swap} style={styles.swapButton}>
           <Ionicons name="swap-horizontal" size={24} color={colors.accent} />
         </Pressable>
-        <CurrencyPill code={to} onPress={() => setPickerFor('to')} />
+        <CurrencyPill code={to} onPress={() => setPickerFor("to")} />
       </View>
       <Text style={styles.result}>
         {loading ? "Laddar..." : `${formatMoney(result)} ${to}`}
@@ -89,7 +92,11 @@ const Home = () => {
         >{`1 ${from} = ${formatRate(rate)} ${to}`}</Text>
       )}
       <NumPad value={amount} onChange={setAmount} />
-      <CurrencyPicker visible={pickerFor !== null} onSelect={selectCurrency} onClose={() => setPickerFor(null)} />
+      <CurrencyPicker
+        visible={pickerFor !== null}
+        onSelect={selectCurrency}
+        onClose={() => setPickerFor(null)}
+      />
     </Screen>
   );
 };
