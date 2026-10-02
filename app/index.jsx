@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import NumPad from "../src/components/NumPad";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { getRate } from "../src/api/frankfurter";
-import { convert } from "../src/utils/convert";
+import { convert, formatAmount } from "../src/utils/convert";
 import ErrorView from "../src/components/ErrorView";
 import CurrencyPicker from "../src/components/CurrencyPicker";
 import AmountRow from "../src/components/AmountRow";
@@ -88,7 +88,7 @@ const Home = () => {
       <View style={styles.card}>
         <AmountRow
           code={from}
-          value={amount}
+          value={formatAmount(amount)}
           onPressCurrency={() => setPickerFor("from")}
         />
 
