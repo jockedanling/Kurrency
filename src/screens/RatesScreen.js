@@ -163,7 +163,7 @@ const filteredRates = rates.filter(
             <Ionicons name="search" size={20} color={colors.textSecondary} />
             <TextInput
                 style={styles.searchInput}
-                placeholder="Sök valuta..."
+                placeholder="Sök efter valutakod..."
                 placeholderTextColor={colors.textSecondary}
                 value={search}
                 onChangeText={setSearch}
@@ -177,7 +177,7 @@ const filteredRates = rates.filter(
             }
             ListEmptyComponent={
                 <View style={styles.empty}>
-                    <Text style={styles.emptyText}>Inga valutor hittades</Text>
+                    <Text style={styles.emptyText}>Inga valuta hittades</Text>
                     </View>
             }
             renderItem={({ item }) => (
