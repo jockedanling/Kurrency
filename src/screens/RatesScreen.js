@@ -163,7 +163,7 @@ const filteredRates = rates.filter(
             <Ionicons name="search" size={20} color={colors.textSecondary} />
             <TextInput
                 style={styles.searchInput}
-                placeholder="Sök efter valuta eller kod..."
+                placeholder="Sök efter valuta..."
                 placeholderTextColor={colors.textSecondary}
                 value={search}
                 onChangeText={setSearch}
