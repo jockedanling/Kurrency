@@ -1,5 +1,19 @@
 // src/api/frankfurter.js
 
+/**
+ * API-klient mot Frankfurter v2
+ * 
+ * All kommunikation med Frankfurter-API:et sker genom denna fil.
+ * Skärmar importerar funktionerna härifrån och får tillbaka
+ * normaliserad data - de behöver aldrig veta hur rå-svaren ser ut.
+ * 
+ * API:et hämtar kurser från 104 källor, då mestadels är från centralbanker,
+ * och uppdateras dagligen.
+ * 
+ * Alla anrop har en timeout på 10 sekunder (AbortSignal.timeout)
+ * och kastar felmeddelanden på svenska vid misslyckanden.
+ */
+
 const BASE_URL = "https://api.frankfurter.dev/v2";
 
 /**

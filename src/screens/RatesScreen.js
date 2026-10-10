@@ -50,7 +50,9 @@ const currencyToCountry = {
   YER: "YE", ZAR: "ZA", ZMW: "ZM", ZWL: "ZW",
 };
 
-// Gör om landskod till flaggemoji
+// Gör om landskod till flaggemoji med Unicode regional indicator symbols.
+// Varje bokstav i landskoder, som "S", "E" - blir en regional indicator-symbol
+// som tillsammans bildar flaggemojin för Sverige.
 function getFlag(code) {
   const country = currencyToCountry[code];
   if (!country) return "";
@@ -92,7 +94,8 @@ export default function RatesScreen() {
     }
   }
   
-  // Uppdaterar kurser vid pull-to-refresh
+  // Pull-to-refresh hämtar ny data utan att visa laddningsskärmen.
+  // Samma logik som fetchRates men sätter refreshing istället för loading.
   async function onRefresh() {
     setRefreshing(true);
     try {
@@ -151,6 +154,7 @@ export default function RatesScreen() {
     return <ErrorView message={error} onRetry={fetchRates} />;
   }
 
+// Filtrerar listan baserat på sökfältet, vilket matchar både valutakod och namn.
 const filteredRates = rates.filter(
     (item) =>
       item.code.toLowerCase().includes(search.toLowerCase()) ||

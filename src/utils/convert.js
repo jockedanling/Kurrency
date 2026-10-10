@@ -1,5 +1,12 @@
 // src/utils/convert.js
 
+/**
+ * Denna fil skapar hjälpfunktioner för valutaomvandling och formatering.
+ * 
+ * convert() - Räknar ut beloppet i målvalutan.
+ * formatAmount() - Lägger till tusentalsavskiljare (sv-SE) för NumPad-visning.
+ */
+
 /** @returns {number} amount * rate, avrundat till 2 decimaler */
 export function convert(amount, rate) {
     return Math.round(amount * rate * 100) / 100;
@@ -7,7 +14,7 @@ export function convert(amount, rate) {
 
 /**
  * Formaterar ett belopp med tusentalsavskiljare (sv-SE)
- * @param {number|string} amount - exempelvis. 1000000
+ * @param {number|string} amount - exempelvis 1000000
  * @returns {string} exempelvis. "100 000"
  */
 export function formatAmount(amount) {
